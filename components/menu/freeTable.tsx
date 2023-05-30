@@ -19,7 +19,7 @@ import {
   Bars4Icon,
   CheckIcon,
   MagnifyingGlassIcon,
-  PencilIcon,
+
   PlusIcon as PlusIconMini,
   Squares2X2Icon as Squares2X2IconMini,
 } from "@heroicons/react/20/solid"
@@ -224,13 +224,11 @@ function Cart() {
         ))}
       </ul>
 
-      <div className="sticky bottom-0 flex-none border-t border-gray-200 bg-gray-50 p-6">
-        <dl className="mt-10 space-y-6 text-sm font-medium text-gray-500">
-          <div className="flex items-center justify-between border-t border-gray-200 pt-6 text-gray-900">
+      <div className="sticky bottom-0 flex-none  border-gray-200 bg-gray-50 p-6">
+      <div className="flex items-center justify-between border-gray-200 pt-6 text-gray-900">
             <dt>Total</dt>
             <dd className="text-base">{Number(subTotal).toLocaleString()} FCFA</dd>
           </div>
-        </dl>
       </div>
       <div className=" mx-1 flex w-full space-x-2">
         <div className="mx-1 flex w-full space-x-2">
@@ -304,32 +302,7 @@ function Cart() {
             </div>
           )}
         </div>
-        {/*    <button
-          onClick={async () => {
-            mutation.mutate({
-              items,
-              amount: total,
-              zoneId,
-              tableId,
-              //@ts-ignore
-              barmanId: session?.user?.email.id,
-            })
-          }}
-          type="button"
-          className="w-1/2 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Valider
-        </button>
-        <button
-          onClick={() => {
-            dispatch(resetCart())
-            setDiscount(0)
-          }}
-          type="button"
-          className="w-1/2 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Annuler
-        </button> */}
+       
       </div>
     </div>
   )

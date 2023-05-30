@@ -70,7 +70,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             id: serveurId,
           })
           //Update ingredients
-          await updateStock({client, items, session})
+          updateStock({client, items, session}).catch(error => {
+            throw error
+          })
 
           //Register the order
           const date = new Date()
@@ -127,9 +129,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
 
       res.send({msg: "success"})
-      axios.post(`${process.env.PRINTER_SERVER_URL_PUBLIC}/print-order`, {
-        order: {items},
-      })
+     
     } catch (error: any) {
       console.log({error})
       res.status(500).send({msg: error.message})
@@ -141,6 +141,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const client = await clientPromise
       const session = client.startSession()
+        const updatedAt = new Date().toLocaleDateString("fr-FR", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+        })
       await session.withTransaction(async () => {
         await updateStock({client, items, session})
         await client
@@ -155,7 +163,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
               },
               $set: {
-                updatedAt: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString(),
+                updatedAt,
               },
               $inc: {
                 amount: Number(amount),

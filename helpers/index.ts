@@ -11,66 +11,94 @@ export const apiFetcher = async (url: string) => {
   return response.data
 }
 
-export const getStatus = (status: string) => {
-  if (status === "success") {
-    return "success"
-  } else if (status === "pending") {
-    return "en attente"
-  } else if (status.includes("no-balance")) {
-    return "montant insuffisant"
-  } else if (status.includes("no-user")) {
-    return "utilisateur non existant"
-  } else {
-    return "échouée"
-  }
-}
-export const updateStock = async ({
-  client,
-  items,
+
+
+const updateStockForBundleProduct = async ({
+  ingredients,
+  standId,
   session,
-}: {
-  client: MongoClient
-  items: any[]
-
-  session: any
-}) => {
-  for (const item of items) {
-    if (item.special) continue
-
-    const product = await client.db().collection("sellingProducts").findOne(
-      {
-        productId: item.productId,
-        deStock: true,
-      },
-      {session}
-    )
+  client,
+  quantity,
+}:any) => {
+  for (const ingredient of ingredients) {
+    const product = await client.db().collection("sellingProducts").findOne({
+      productId: ingredient.id,
+      standId,
+      deStock: true,
+    });
 
     if (!product) {
-      throw new Error(`${item.name} n'existe pas dans l'entrepôt`)
+      throw new Error(`${ingredient.name} n'existe pas dans l'entrepôt`);
     }
-
-    let totalToDestock = item.deStock
-      ? item.qty * item.contenance
-      : item.qty * item.sellingPerUnit.qty
-
-    if (totalToDestock > product.stock) {
-      throw new Error(`${item.name} stock insuffisant`)
-    }
-
+    const totalToDeStock = ingredient.qty * quantity;
     await client
       .db()
       .collection("sellingProducts")
       .updateOne(
         {
-          productId: item.productId,
-          deStock: true,
+          id: product.id,
         },
         {
           $inc: {
-            stock: -totalToDestock,
+            stock: -totalToDeStock,
           },
         },
-        {session}
-      )
+        { session }
+      );
   }
-}
+};
+export const updateStock = async ({
+  client,
+  items,
+  session,
+}: {
+  client: MongoClient;
+  items: any[];
+  
+  session: any;
+}) => {
+  for (const item of items) {
+    if (item.special) continue;
+    const product = await client.db().collection("sellingProducts").findOne(
+      {
+        standId: item.standId,
+        productId: item.productId,
+      },
+      { session }
+    );
+
+    if (!product) {
+      throw new Error(`${item.name} n'existe pas dans l'entrepôt`);
+    }
+    if (product.bundle) {
+      await updateStockForBundleProduct({
+        ingredients: item.ingredients,
+        standId: item.standId,
+        session,
+        client,
+        quantity: item.qty,
+      });
+    } else {
+      let totalToDeStock = item.deStock
+        ? item.qty * item.contenance
+        : item.qty * item.sellingPerUnit.qty;
+
+
+      await client
+        .db()
+        .collection("sellingProducts")
+        .updateOne(
+          {
+            standId: item.standId,
+            productId: item.productId,
+          },
+          {
+            $inc: {
+              stock: -totalToDeStock,
+            },
+          },
+          { session }
+        );
+    }
+  }
+};

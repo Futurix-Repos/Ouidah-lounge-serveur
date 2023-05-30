@@ -31,7 +31,7 @@ export default function Zones() {
     queryKey: "zones",
     queryFn: () => apiFetcher("/api/zones"),
     onSuccess: (data) => {
-      dispatch(setCurrentZone(data[0].id));
+      dispatch(setCurrentZone(data[0]?.id));
     },
   });
 
