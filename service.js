@@ -4,7 +4,7 @@ const script = path.join(__dirname, "server.js");
 
 // Create a new service object
 var svc = new Service({
-  name: "3001",
+  name: "3002-SERVEUR",
   description: "Frontend serveur",
   script,
   nodeOptions: ["--harmony", "--max_old_space_size=4096"],

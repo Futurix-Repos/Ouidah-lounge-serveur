@@ -2,7 +2,7 @@
 import {MongoClient} from "mongodb"
 ;("use strict")
 
-const uri = String(process.env.MONGODB_URI)
+const uri ="mongodb://localhost:27017/ouidah-lounge"
 const options = {
   useUnifiedTopology: true,
   useNewUrlParser: true,

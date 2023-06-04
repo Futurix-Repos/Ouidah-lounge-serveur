@@ -121,6 +121,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               },
               {session}
             )
+
+            await axios.post("http://192.168.20.14:7000/print-order", {order:{items, id:_orderId.toString()}})
         } catch (error: any) {
           console.log(error)
           session.endSession()
@@ -174,7 +176,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
           )
       })
-
+      await axios.post("http://192.168.20.14:7000/print-order", {order:{items, id:orderId}})
       res.send({msg: "Order modified successfully"})
     } catch (error: any) {
       console.error(error)
